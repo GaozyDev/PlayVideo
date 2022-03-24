@@ -1,9 +1,9 @@
 package com.gzy.playvideo.video;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 
-import com.gzy.playvideo.video.data.VideoData;
 import com.gzy.playvideo.video.view.ListVideoView;
 
 
@@ -20,9 +20,26 @@ public class VideoBuilder {
         mParentView = parentView;
     }
 
+    /**
+     * 创建视频流 View
+     */
     public ListVideoView createListVideoView() {
         ListVideoView listVideoView = new ListVideoView(mContext, mParentView);
         mParentView.addView(listVideoView);
         return listVideoView;
+    }
+
+    /**
+     * 创建视频详情页 View
+     */
+    public View createVideoView() {
+        return new View(mContext);
+    }
+
+    /**
+     * 创建视频全屏页 View
+     */
+    public View createFullVideoView() {
+        return new View(mContext);
     }
 }

@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
@@ -36,7 +36,6 @@ public class VideoView extends FrameLayout {
 
     private TextureView mTextureView;
     private ImageView mIvPreview;
-    private ProgressBar mProgressBar;
     private final AudioManager mAudioManager;
     private Surface mSurface;
 
@@ -65,7 +64,6 @@ public class VideoView extends FrameLayout {
             }
         });
         mIvPreview = layout.findViewById(R.id.iv_video_layout_preview);
-        mProgressBar = layout.findViewById(R.id.pb_video_layout);
         initTextureView();
     }
 
@@ -104,13 +102,9 @@ public class VideoView extends FrameLayout {
         mMediaPlayer.setSurface(mSurface);
         mMediaPlayer.setOnPreparedListener(mp -> {
             Log.e(TAG, "Prepared");
-            mProgressBar.setVisibility(GONE);
             mMediaPlayer = mp;
             if (Utils.canAutoPlay(getContext(), VideoParameters.getCurrentSetting())) {
                 start();
-                if (mVideoPlayListener != null) {
-                    mVideoPlayListener.onVideoPlayStart();
-                }
             }
         });
         mMediaPlayer.setOnCompletionListener(mp -> {
@@ -125,7 +119,6 @@ public class VideoView extends FrameLayout {
             if (mVideoPlayListener != null) {
                 mVideoPlayListener.onVideoPlayFailed();
             }
-            mProgressBar.setVisibility(GONE);
             mPlayerState = STATE_ERROR;
             mMediaPlayer = mp;
             stop();
@@ -146,7 +139,6 @@ public class VideoView extends FrameLayout {
         if (this.mPlayerState != STATE_IDLE) {
             return;
         }
-        mProgressBar.setVisibility(VISIBLE);
         try {
             mMediaPlayer = createMediaPlayer();
             mMediaPlayer.setDataSource(url);
@@ -166,7 +158,12 @@ public class VideoView extends FrameLayout {
         if (!isPlaying()) {
             mPlayerState = STATE_PLAYING;
             mMediaPlayer.start();
-            mIvPreview.setVisibility(GONE);
+            postDelayed(() -> {
+                mIvPreview.setVisibility(GONE);
+                if (mVideoPlayListener != null) {
+                    mVideoPlayListener.onVideoPlayStart();
+                }
+            }, 500);
         }
     }
 
@@ -251,6 +248,12 @@ public class VideoView extends FrameLayout {
         stop();
         destroy();
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        Log.e(TAG, "visibility:" + visibility);
     }
 
     public interface VideoInitListener {

@@ -51,7 +51,6 @@ class ListVideoActivity : AppCompatActivity(), View.OnClickListener, SurfaceHold
             )
         }
 
-
         val adapter = VideoAdapter(data)
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -76,7 +75,4 @@ class ListVideoActivity : AppCompatActivity(), View.OnClickListener, SurfaceHold
     override fun surfaceDestroyed(holder: SurfaceHolder) {
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

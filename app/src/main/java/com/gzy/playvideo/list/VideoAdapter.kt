@@ -1,6 +1,5 @@
 package com.gzy.playvideo.list
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,9 +34,9 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
                 ).createListVideoView()
             }
 
-            viewHolder.videoView!!.loadPreview(dataSet[position].preview)
+            viewHolder.videoView!!.loadPreview(dataSet.random().preview)
             viewHolder.videoView!!.setVideoInitListener {
-                viewHolder.videoView!!.loadVideo(dataSet[position].url)
+                viewHolder.videoView!!.loadVideo(dataSet.random().url)
             }
         }
     }

@@ -28,8 +28,6 @@ public class ListVideoView extends FrameLayout {
 
     private boolean mIsMute = true;
 
-    private int mLastArea;
-
     public ListVideoView(Context context, ViewGroup parentView) {
         super(context);
         mParentView = parentView;
@@ -104,6 +102,7 @@ public class ListVideoView extends FrameLayout {
     }
 
     public void loadPreview(String url) {
+        mIvPlay.setVisibility(VISIBLE);
         mVideoView.loadPreview(url);
     }
 
@@ -113,30 +112,5 @@ public class ListVideoView extends FrameLayout {
 
     public void setVideoInitListener(VideoView.VideoInitListener mVideoInitListener) {
         mVideoView.setVideoInitListener(mVideoInitListener);
-    }
-
-    public void updateVideo() {
-        int currentArea = Utils.getVisiblePercent(mParentView);
-        if (currentArea <= 0) {
-            return;
-        }
-
-        if (Math.abs(currentArea - mLastArea) >= 100) {
-            return;
-        }
-
-        if (currentArea < SDKConstant.VIDEO_SCREEN_PERCENT) {
-            mLastArea = 0;
-            mVideoView.seekAndPause(0);
-            return;
-        }
-
-        if (Utils.canAutoPlay(mParentView.getContext(), VideoParameters.getCurrentSetting())
-                || isPlaying()) {
-            mLastArea = currentArea;
-            mVideoView.start();
-        } else {
-            mVideoView.pause();
-        }
     }
 }
