@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.gzy.playvideo.R;
-import com.gzy.playvideo.video.data.AdParameters;
+import com.gzy.playvideo.video.data.VideoParameters;
 import com.gzy.playvideo.video.data.SDKConstant;
 import com.gzy.playvideo.video.utils.DisplayUtil;
 import com.gzy.playvideo.video.utils.Utils;
@@ -21,6 +21,8 @@ public class ListVideoView extends FrameLayout {
     private final ViewGroup mParentView;
 
     private FrameLayout mFlVideoContent;
+
+    private ImageView mIvPlay;
 
     private VideoView mVideoView;
 
@@ -47,12 +49,15 @@ public class ListVideoView extends FrameLayout {
         inflater.inflate(R.layout.layout_list_video, this);
 
         mFlVideoContent = findViewById(R.id.fl_list_video_content);
+        mIvPlay = findViewById(R.id.iv_list_video_play);
         ImageView mIvFullScreen = findViewById(R.id.iv_list_video_full);
         ImageView mIvBarrage = findViewById(R.id.iv_list_video_barrage);
         ImageView mIvMute = findViewById(R.id.iv_list_video_mute);
 
         initVideoView(layoutParams);
 
+        mIvPlay.setOnClickListener(v -> {
+        });
         mIvMute.setOnClickListener(v -> {
             mIsMute = !mIsMute;
             mVideoView.mute(mIsMute);
@@ -61,20 +66,20 @@ public class ListVideoView extends FrameLayout {
 
     private void initVideoView(LayoutParams layoutParams) {
         mVideoView = new VideoView(getContext(), layoutParams);
-        mVideoView.setVideoPlayerListener(new VideoView.VideoPlayerListener() {
+        mVideoView.setVideoPlayerListener(new VideoView.VideoPlayListener() {
             @Override
-            public void onVideoLoadSuccess() {
-
+            public void onVideoPlayStart() {
+                mIvPlay.setVisibility(GONE);
             }
 
             @Override
-            public void onVideoLoadFailed() {
+            public void onVideoPlayFailed() {
 
             }
 
             @Override
             public void onVideoPlayComplete() {
-
+                mIvPlay.setVisibility(VISIBLE);
             }
 
             @Override
@@ -126,7 +131,7 @@ public class ListVideoView extends FrameLayout {
             return;
         }
 
-        if (Utils.canAutoPlay(mParentView.getContext(), AdParameters.getCurrentSetting())
+        if (Utils.canAutoPlay(mParentView.getContext(), VideoParameters.getCurrentSetting())
                 || isPlaying()) {
             mLastArea = currentArea;
             mVideoView.start();

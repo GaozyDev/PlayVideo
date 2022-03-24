@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.gzy.playvideo.R;
-import com.gzy.playvideo.video.data.AdParameters;
+import com.gzy.playvideo.video.data.VideoParameters;
 import com.gzy.playvideo.video.utils.Utils;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class VideoView extends FrameLayout {
     private Surface mSurface;
 
     private MediaPlayer mMediaPlayer;
-    private VideoPlayerListener mVideoPlayerListener;
+    private VideoPlayListener mVideoPlayListener;
 
     private boolean mInitComplete = false;
 
@@ -61,7 +61,7 @@ public class VideoView extends FrameLayout {
         mTextureView.setKeepScreenOn(true);
         mTextureView.setOnClickListener(v -> {
             if (v == mTextureView) {
-                mVideoPlayerListener.onVideoClick();
+                mVideoPlayListener.onVideoClick();
             }
         });
         mIvPreview = layout.findViewById(R.id.iv_video_layout_preview);
@@ -104,27 +104,26 @@ public class VideoView extends FrameLayout {
         mMediaPlayer.setSurface(mSurface);
         mMediaPlayer.setOnPreparedListener(mp -> {
             Log.e(TAG, "Prepared");
-            if (mVideoPlayerListener != null) {
-                mVideoPlayerListener.onVideoLoadSuccess();
-            }
             mProgressBar.setVisibility(GONE);
             mMediaPlayer = mp;
-
-            if (Utils.canAutoPlay(getContext(), AdParameters.getCurrentSetting())) {
+            if (Utils.canAutoPlay(getContext(), VideoParameters.getCurrentSetting())) {
                 start();
+                if (mVideoPlayListener != null) {
+                    mVideoPlayListener.onVideoPlayStart();
+                }
             }
         });
         mMediaPlayer.setOnCompletionListener(mp -> {
             Log.e(TAG, "Completion");
-            if (mVideoPlayerListener != null) {
-                mVideoPlayerListener.onVideoPlayComplete();
+            if (mVideoPlayListener != null) {
+                mVideoPlayListener.onVideoPlayComplete();
             }
             playBack();
         });
         mMediaPlayer.setOnErrorListener((mp, what, extra) -> {
             Log.e(TAG, "Error");
-            if (mVideoPlayerListener != null) {
-                mVideoPlayerListener.onVideoLoadFailed();
+            if (mVideoPlayListener != null) {
+                mVideoPlayListener.onVideoPlayFailed();
             }
             mProgressBar.setVisibility(GONE);
             mPlayerState = STATE_ERROR;
@@ -153,8 +152,8 @@ public class VideoView extends FrameLayout {
             mMediaPlayer.setDataSource(url);
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
+            Log.e(TAG, "loadVideo exception");
             e.printStackTrace();
-            Log.e(TAG, "loadVideo Exception");
             stop();
         }
     }
@@ -216,8 +215,8 @@ public class VideoView extends FrameLayout {
         return mMediaPlayer.isPlaying();
     }
 
-    public void setVideoPlayerListener(VideoPlayerListener videoPlayerListener) {
-        this.mVideoPlayerListener = videoPlayerListener;
+    public void setVideoPlayerListener(VideoPlayListener videoPlayListener) {
+        this.mVideoPlayListener = videoPlayListener;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -258,11 +257,11 @@ public class VideoView extends FrameLayout {
         void onComplete();
     }
 
-    public interface VideoPlayerListener {
+    public interface VideoPlayListener {
 
-        void onVideoLoadSuccess();
+        void onVideoPlayStart();
 
-        void onVideoLoadFailed();
+        void onVideoPlayFailed();
 
         void onVideoPlayComplete();
 

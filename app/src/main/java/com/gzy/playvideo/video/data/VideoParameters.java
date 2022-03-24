@@ -1,6 +1,6 @@
 package com.gzy.playvideo.video.data;
 
-public final class AdParameters {
+public final class VideoParameters {
 
     private static SDKConstant.AutoPlaySetting currentSetting = SDKConstant.AutoPlaySetting.AUTO_PLAY_3G_4G_WIFI;
 

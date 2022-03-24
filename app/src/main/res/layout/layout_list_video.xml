@@ -13,6 +13,14 @@
         android:layout_height="match_parent" />
 
     <ImageView
+        android:id="@+id/iv_list_video_play"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_tv_play"
+        app:tint="@color/trans_70" />
+
+    <ImageView
         android:id="@+id/iv_list_video_full"
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -20,7 +28,6 @@
         android:layout_marginEnd="106dp"
         android:layout_marginBottom="2dp"
         android:padding="3dp"
-        android:scaleType="fitCenter"
         android:src="@drawable/ic_full_screen"
         app:tint="@color/trans_60" />
 
@@ -32,7 +39,6 @@
         android:layout_marginEnd="56dp"
         android:layout_marginBottom="2dp"
         android:padding="3dp"
-        android:scaleType="fitCenter"
         android:src="@drawable/ic_barrage"
         app:tint="@color/trans_60" />
 
@@ -44,7 +50,6 @@
         android:layout_marginEnd="6dp"
         android:layout_marginBottom="2dp"
         android:padding="3dp"
-        android:scaleType="fitCenter"
         android:src="@drawable/ic_sound"
         app:tint="@color/trans_60" />
 </FrameLayout>
