@@ -22,27 +22,15 @@ public class ListVideoView extends FrameLayout {
 
     private FrameLayout mFlVideoContent;
 
-    private ImageView mIvFullScreen;
-
-    private ImageView mIvBarrage;
-
-    private ImageView mIvMute;
-
     private VideoView mVideoView;
-
-    private final String mUrl;
-
-    private final String mPreviewURL;
 
     private boolean mIsMute = true;
 
     private int mLastArea;
 
-    public ListVideoView(Context context, ViewGroup parentView, String sourceUrl, String previewUrl) {
+    public ListVideoView(Context context, ViewGroup parentView) {
         super(context);
         mParentView = parentView;
-        mUrl = sourceUrl;
-        mPreviewURL = previewUrl;
         initView();
     }
 
@@ -52,18 +40,18 @@ public class ListVideoView extends FrameLayout {
         wm.getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels - DisplayUtil.dp2px(getContext(), 20);
         int height = (int) (width * SDKConstant.VIDEO_HEIGHT_PERCENT);
-        LayoutParams params = new LayoutParams(width, height);
-        setLayoutParams(params);
+        LayoutParams layoutParams = new LayoutParams(width, height);
+        setLayoutParams(layoutParams);
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.layout_list_video, this);
 
         mFlVideoContent = findViewById(R.id.fl_list_video_content);
-        mIvFullScreen = findViewById(R.id.iv_list_video_full);
-        mIvBarrage = findViewById(R.id.iv_list_video_barrage);
-        mIvMute = findViewById(R.id.iv_list_video_mute);
+        ImageView mIvFullScreen = findViewById(R.id.iv_list_video_full);
+        ImageView mIvBarrage = findViewById(R.id.iv_list_video_barrage);
+        ImageView mIvMute = findViewById(R.id.iv_list_video_mute);
 
-        initVideoView(params);
+        initVideoView(layoutParams);
 
         mIvMute.setOnClickListener(v -> {
             mIsMute = !mIsMute;
@@ -71,8 +59,8 @@ public class ListVideoView extends FrameLayout {
         });
     }
 
-    private void initVideoView(LayoutParams params) {
-        mVideoView = new VideoView(getContext(), mParentView, params, mUrl, mPreviewURL);
+    private void initVideoView(LayoutParams layoutParams) {
+        mVideoView = new VideoView(getContext(), layoutParams);
         mVideoView.setVideoPlayerListener(new VideoView.VideoPlayerListener() {
             @Override
             public void onVideoLoadSuccess() {
@@ -99,7 +87,7 @@ public class ListVideoView extends FrameLayout {
     }
 
     public void resume() {
-        mVideoView.resume();
+        mVideoView.start();
     }
 
     public void pause() {
@@ -110,13 +98,20 @@ public class ListVideoView extends FrameLayout {
         return mVideoView.isPlaying();
     }
 
-    public void setAdVideoPlayerListener(VideoView.VideoPlayerListener videoPlayerListener) {
-        mVideoView.setVideoPlayerListener(videoPlayerListener);
+    public void loadPreview(String url) {
+        mVideoView.loadPreview(url);
+    }
+
+    public void loadVideo(String url) {
+        mVideoView.loadVideo(url);
+    }
+
+    public void setVideoInitListener(VideoView.VideoInitListener mVideoInitListener) {
+        mVideoView.setVideoInitListener(mVideoInitListener);
     }
 
     public void updateVideo() {
         int currentArea = Utils.getVisiblePercent(mParentView);
-        // 小于0表示未出现在屏幕上，不做任何处理
         if (currentArea <= 0) {
             return;
         }
@@ -127,20 +122,16 @@ public class ListVideoView extends FrameLayout {
 
         if (currentArea < SDKConstant.VIDEO_SCREEN_PERCENT) {
             mLastArea = 0;
+            mVideoView.seekAndPause(0);
             return;
         }
 
-        // 满足自动播放条件或者用户主动点击播放，开始播放
         if (Utils.canAutoPlay(mParentView.getContext(), AdParameters.getCurrentSetting())
                 || isPlaying()) {
             mLastArea = currentArea;
-            mVideoView.resume();
+            mVideoView.start();
         } else {
             mVideoView.pause();
         }
-    }
-
-    public void destroy() {
-        mVideoView.destroy();
     }
 }

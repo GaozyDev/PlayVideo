@@ -7,9 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzy.playvideo.R
-import com.gzy.playvideo.video.VideoContextInterface
-import com.gzy.playvideo.video.VideoContext
-import com.gzy.playvideo.video.VideoData
+import com.gzy.playvideo.video.data.VideoData
 
 
 class ListVideoActivity : AppCompatActivity(), View.OnClickListener, SurfaceHolder.Callback {
@@ -24,30 +22,37 @@ class ListVideoActivity : AppCompatActivity(), View.OnClickListener, SurfaceHold
     private fun initView() {
         val recyclerView = findViewById<RecyclerView>(R.id.rv_list_video)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = VideoAdapter(
-            listOf(
+        val data = mutableListOf<VideoData>()
+
+        val urls = listOf(
+            "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/19/mp4/190319222227698228.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318214226685784.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/19/mp4/190319104618910544.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/19/mp4/190319125415785691.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/17/mp4/190317150237409904.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/14/mp4/190314102306987969.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/13/mp4/190313094901111138.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312083533415853.mp4",
+            "http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"
+        )
+
+        for (url in urls) {
+            data.add(
                 VideoData(
-                    "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
-                    "https://img-baofun.zhhainiao.com/fs/42dc11435af1ee0339a17642a2d232d6.jpg"
-                ),
-                VideoData(
-                    "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
-                    "https://img-baofun.zhhainiao.com/fs/42dc11435af1ee0339a17642a2d232d6.jpg"
-                ), VideoData(
-                    "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
-                    "https://img-baofun.zhhainiao.com/fs/42dc11435af1ee0339a17642a2d232d6.jpg"
-                ), VideoData(
-                    "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
-                    "https://img-baofun.zhhainiao.com/fs/42dc11435af1ee0339a17642a2d232d6.jpg"
-                ), VideoData(
-                    "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
-                    "https://img-baofun.zhhainiao.com/fs/42dc11435af1ee0339a17642a2d232d6.jpg"
-                ), VideoData(
-                    "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
-                    "https://img-baofun.zhhainiao.com/fs/42dc11435af1ee0339a17642a2d232d6.jpg"
+                    url,
+                    "https://images7.alphacoders.com/550/thumb-1920-550739.jpg"
                 )
             )
-        )
+        }
+
+
+        val adapter = VideoAdapter(data)
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
