@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.gzy.playvideo.list.ListVideoActivity
+import com.gzy.playvideo.ui.list.VideoListActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initClick() {
         findViewById<Button>(R.id.btn_main_list_video).setOnClickListener {
-            startActivity(Intent(this, ListVideoActivity::class.java))
+            startActivity(Intent(this, VideoListActivity::class.java))
         }
     }
 }

@@ -1,16 +1,22 @@
-package com.gzy.playvideo.list
+package com.gzy.playvideo.ui.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzy.playvideo.R
+import com.gzy.playvideo.ui.detail.VideoDetailActivity
+import com.gzy.playvideo.video.VideoManager
 import com.gzy.playvideo.video.data.VideoData
+import com.gzy.playvideo.video.view.ListVideoView
+import com.gzy.playvideo.video.view.VideoView
 
 
-class ListVideoActivity : AppCompatActivity(), View.OnClickListener, SurfaceHolder.Callback {
+class VideoListActivity : AppCompatActivity(), View.OnClickListener, SurfaceHolder.Callback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +65,16 @@ class ListVideoActivity : AppCompatActivity(), View.OnClickListener, SurfaceHold
                 adapter.updateVideo()
             }
         })
+        adapter.mAdapterListener = object : VideoAdapter.AdapterListener {
+            override fun onVideoClick(parentView: ListVideoView, videoView: VideoView) {
+                videoView.pause()
+                val parent = videoView.parent as ViewGroup
+                parent.removeView(videoView)
+                VideoManager.getInstance().videoView = videoView
+                videoView.setVideoInitListener(null)
+                startActivity(Intent(this@VideoListActivity, VideoDetailActivity::class.java))
+            }
+        }
     }
 
     override fun onClick(v: View?) {

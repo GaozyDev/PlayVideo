@@ -1,4 +1,4 @@
-package com.gzy.playvideo.list
+package com.gzy.playvideo.ui.list
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +9,14 @@ import com.gzy.playvideo.R
 import com.gzy.playvideo.video.VideoManager
 import com.gzy.playvideo.video.data.VideoData
 import com.gzy.playvideo.video.view.ListVideoView
+import com.gzy.playvideo.video.view.VideoView
 
 class VideoAdapter(private val dataSet: List<VideoData>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var mVideoManager: VideoManager = VideoManager.getInstance()
+
+    var mAdapterListener: AdapterListener? = null
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
@@ -32,6 +35,10 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
                 viewHolder.videoView = mVideoManager.build(
                     viewHolder.layout
                 ).createListVideoView()
+
+                viewHolder.videoView?.setListVideoListener {
+                    mAdapterListener?.onVideoClick(viewHolder.videoView!!, it)
+                }
             }
 
             viewHolder.videoView!!.loadPreview(dataSet.random().preview)
@@ -60,4 +67,8 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
     }
 
     class ImageHolder(view: View) : RecyclerView.ViewHolder(view)
+
+    interface AdapterListener {
+        fun onVideoClick(parentView: ListVideoView, videoView: VideoView)
+    }
 }

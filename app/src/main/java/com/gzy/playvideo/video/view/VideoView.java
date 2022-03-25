@@ -77,6 +77,10 @@ public class VideoView extends FrameLayout {
                 if (mVideoInitListener != null) {
                     mVideoInitListener.onComplete();
                 }
+
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.setSurface(mSurface);
+                }
             }
 
             @Override
@@ -219,6 +223,7 @@ public class VideoView extends FrameLayout {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        Log.e(TAG, "onTouchEvent");
         return true;
     }
 
@@ -245,8 +250,8 @@ public class VideoView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         Log.e(TAG, "onDetachedFromWindow");
-        stop();
-        destroy();
+//        stop();
+//        destroy();
         super.onDetachedFromWindow();
     }
 

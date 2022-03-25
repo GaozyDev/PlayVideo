@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 
 import com.gzy.playvideo.video.view.ListVideoView;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class VideoBuilder {
 
@@ -23,6 +25,7 @@ public class VideoBuilder {
     /**
      * 创建视频流 View
      */
+    @NotNull
     public ListVideoView createListVideoView() {
         ListVideoView listVideoView = new ListVideoView(mContext, mParentView);
         mParentView.addView(listVideoView);

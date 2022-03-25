@@ -10,10 +10,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.gzy.playvideo.R;
-import com.gzy.playvideo.video.data.VideoParameters;
 import com.gzy.playvideo.video.data.SDKConstant;
 import com.gzy.playvideo.video.utils.DisplayUtil;
-import com.gzy.playvideo.video.utils.Utils;
 
 @SuppressLint("ViewConstructor")
 public class ListVideoView extends FrameLayout {
@@ -27,6 +25,8 @@ public class ListVideoView extends FrameLayout {
     private VideoView mVideoView;
 
     private boolean mIsMute = true;
+
+    private ListVideoListener mListVideoListener;
 
     public ListVideoView(Context context, ViewGroup parentView) {
         super(context);
@@ -82,7 +82,9 @@ public class ListVideoView extends FrameLayout {
 
             @Override
             public void onVideoClick() {
-
+                if (mListVideoListener != null) {
+                    mListVideoListener.onVideoClick(mVideoView);
+                }
             }
         });
         mFlVideoContent.addView(mVideoView);
@@ -112,5 +114,17 @@ public class ListVideoView extends FrameLayout {
 
     public void setVideoInitListener(VideoView.VideoInitListener mVideoInitListener) {
         mVideoView.setVideoInitListener(mVideoInitListener);
+    }
+
+    public VideoView getVideoView() {
+        return mVideoView;
+    }
+
+    public void setListVideoListener(ListVideoListener listVideoListener) {
+        this.mListVideoListener = listVideoListener;
+    }
+
+    public interface ListVideoListener {
+        void onVideoClick(VideoView videoView);
     }
 }
