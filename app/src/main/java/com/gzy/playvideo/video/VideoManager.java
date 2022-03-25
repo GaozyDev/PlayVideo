@@ -29,7 +29,9 @@ public class VideoManager {
     }
 
     public VideoView getVideoView() {
-        return mVideoView;
+        VideoView videoView = mVideoView;
+        mVideoView = null;
+        return videoView;
     }
 
     public void setVideoView(VideoView mVideoView) {

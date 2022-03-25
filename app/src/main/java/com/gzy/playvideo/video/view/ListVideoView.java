@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -13,12 +12,13 @@ import com.gzy.playvideo.R;
 import com.gzy.playvideo.video.data.SDKConstant;
 import com.gzy.playvideo.video.utils.DisplayUtil;
 
+import org.jetbrains.annotations.NotNull;
+
 @SuppressLint("ViewConstructor")
 public class ListVideoView extends FrameLayout {
 
-    private final ViewGroup mParentView;
 
-    private FrameLayout mFlVideoContent;
+    private FrameLayout mFlVideoParent;
 
     private ImageView mIvPlay;
 
@@ -28,9 +28,12 @@ public class ListVideoView extends FrameLayout {
 
     private ListVideoListener mListVideoListener;
 
-    public ListVideoView(Context context, ViewGroup parentView) {
+    private VideoView.VideoInitListener mVideoInitListener;
+
+    private LayoutParams mLayoutParams;
+
+    public ListVideoView(Context context) {
         super(context);
-        mParentView = parentView;
         initView();
     }
 
@@ -40,19 +43,19 @@ public class ListVideoView extends FrameLayout {
         wm.getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels - DisplayUtil.dp2px(getContext(), 20);
         int height = (int) (width * SDKConstant.VIDEO_HEIGHT_PERCENT);
-        LayoutParams layoutParams = new LayoutParams(width, height);
-        setLayoutParams(layoutParams);
+        mLayoutParams = new LayoutParams(width, height);
+        setLayoutParams(mLayoutParams);
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.layout_list_video, this);
 
-        mFlVideoContent = findViewById(R.id.fl_list_video_content);
+        mFlVideoParent = findViewById(R.id.fl_list_video_parent);
         mIvPlay = findViewById(R.id.iv_list_video_play);
         ImageView mIvFullScreen = findViewById(R.id.iv_list_video_full);
         ImageView mIvBarrage = findViewById(R.id.iv_list_video_barrage);
         ImageView mIvMute = findViewById(R.id.iv_list_video_mute);
 
-        initVideoView(layoutParams);
+        initVideoView(mLayoutParams);
 
         mIvPlay.setOnClickListener(v -> {
         });
@@ -63,33 +66,35 @@ public class ListVideoView extends FrameLayout {
     }
 
     private void initVideoView(LayoutParams layoutParams) {
-        mVideoView = new VideoView(getContext(), layoutParams);
-        mVideoView.setVideoPlayerListener(new VideoView.VideoPlayListener() {
-            @Override
-            public void onVideoPlayStart() {
-                mIvPlay.setVisibility(GONE);
-            }
-
-            @Override
-            public void onVideoPlayFailed() {
-
-            }
-
-            @Override
-            public void onVideoPlayComplete() {
-                mIvPlay.setVisibility(VISIBLE);
-            }
-
-            @Override
-            public void onVideoClick() {
-                if (mListVideoListener != null) {
-                    mListVideoListener.onVideoClick(mVideoView);
-                }
-            }
-        });
-        mFlVideoContent.addView(mVideoView);
+        mVideoView = new VideoView(getContext(), layoutParams, true);
+        mVideoView.setVideoPlayerListener(videoPlayListener);
+        mFlVideoParent.addView(mVideoView);
         mVideoView.mute(mIsMute);
     }
+
+    VideoView.VideoPlayListener videoPlayListener = new VideoView.VideoPlayListener() {
+        @Override
+        public void onVideoPlayStart() {
+            mIvPlay.setVisibility(GONE);
+        }
+
+        @Override
+        public void onVideoPlayFailed() {
+
+        }
+
+        @Override
+        public void onVideoPlayComplete() {
+            mIvPlay.setVisibility(VISIBLE);
+        }
+
+        @Override
+        public void onVideoClick() {
+            if (mListVideoListener != null) {
+                mListVideoListener.onVideoClick(ListVideoView.this);
+            }
+        }
+    };
 
     public void resume() {
         mVideoView.start();
@@ -112,7 +117,8 @@ public class ListVideoView extends FrameLayout {
         mVideoView.loadVideo(url);
     }
 
-    public void setVideoInitListener(VideoView.VideoInitListener mVideoInitListener) {
+    public void setVideoInitListener(VideoView.VideoInitListener videoInitListener) {
+        mVideoInitListener = videoInitListener;
         mVideoView.setVideoInitListener(mVideoInitListener);
     }
 
@@ -124,7 +130,21 @@ public class ListVideoView extends FrameLayout {
         this.mListVideoListener = listVideoListener;
     }
 
+    public void backVideoView(VideoView videoView) {
+        mVideoView = videoView;
+        mVideoView.setLayoutParams(mLayoutParams);
+        mVideoView.setVideoPlayerListener(videoPlayListener);
+        mVideoView.setVideoInitListener(new VideoView.VideoInitListener() {
+            @Override
+            public void onComplete(VideoView videoView) {
+                videoView.start();
+            }
+        });
+        mVideoView.setIsProcessDetached(true);
+        mFlVideoParent.addView(mVideoView);
+    }
+
     public interface ListVideoListener {
-        void onVideoClick(VideoView videoView);
+        void onVideoClick(@NotNull ListVideoView listVideoView);
     }
 }

@@ -18,6 +18,8 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
 
     var mAdapterListener: AdapterListener? = null
 
+    private var mVideoHolder: VideoHolder? = null
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_list_video, viewGroup, false)
@@ -31,21 +33,27 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         if (viewHolder is VideoHolder) {
-            if (viewHolder.videoView == null) {
-                viewHolder.videoView = mVideoManager.build(
+            if (viewHolder.listVideoView == null) {
+                viewHolder.listVideoView = mVideoManager.build(
                     viewHolder.layout
                 ).createListVideoView()
 
-                viewHolder.videoView?.setListVideoListener {
-                    mAdapterListener?.onVideoClick(viewHolder.videoView!!, it)
+                viewHolder.listVideoView?.setListVideoListener { listVideoView ->
+                    mAdapterListener?.onVideoClick(listVideoView.videoView)
+                    mVideoHolder = listVideoView.tag as VideoHolder?
                 }
             }
 
-            viewHolder.videoView!!.loadPreview(dataSet.random().preview)
-            viewHolder.videoView!!.setVideoInitListener {
-                viewHolder.videoView!!.loadVideo(dataSet.random().url)
+            viewHolder.listVideoView?.tag = viewHolder
+            viewHolder.listVideoView?.let {
+                it.loadPreview(dataSet.random().preview)
+                it.setVideoInitListener { videoView -> videoView.loadVideo(dataSet.random().url) }
             }
         }
+    }
+
+    fun backToAdapter(videoView: VideoView) {
+        mVideoHolder?.listVideoView?.backVideoView(videoView)
     }
 
     override fun getItemCount() = dataSet.size
@@ -57,18 +65,14 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
         return super.getItemViewType(position)
     }
 
-    fun updateVideo() {
-
-    }
-
     class VideoHolder(view: View) : RecyclerView.ViewHolder(view) {
         val layout: FrameLayout = view as FrameLayout
-        var videoView: ListVideoView? = null
+        var listVideoView: ListVideoView? = null
     }
 
     class ImageHolder(view: View) : RecyclerView.ViewHolder(view)
 
     interface AdapterListener {
-        fun onVideoClick(parentView: ListVideoView, videoView: VideoView)
+        fun onVideoClick(videoView: VideoView)
     }
 }

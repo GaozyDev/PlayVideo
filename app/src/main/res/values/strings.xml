@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PlayVideo</string>
+
+    <string name="share_video_view">ShareVideo</string>
 </resources>

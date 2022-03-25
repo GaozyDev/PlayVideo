@@ -8,9 +8,10 @@
     tools:ignore="ContentDescription">
 
     <FrameLayout
-        android:id="@+id/fl_list_video_content"
+        android:id="@+id/fl_list_video_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:transitionName="@string/share_video_view" />
 
     <ImageView
         android:id="@+id/iv_list_video_play"

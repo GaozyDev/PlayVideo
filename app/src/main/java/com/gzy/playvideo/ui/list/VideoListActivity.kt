@@ -6,17 +6,22 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzy.playvideo.R
 import com.gzy.playvideo.ui.detail.VideoDetailActivity
+import com.gzy.playvideo.ui.detail.VideoDetailActivity.Companion.SHARE_VIDEO_VIEW
 import com.gzy.playvideo.video.VideoManager
 import com.gzy.playvideo.video.data.VideoData
-import com.gzy.playvideo.video.view.ListVideoView
 import com.gzy.playvideo.video.view.VideoView
 
 
 class VideoListActivity : AppCompatActivity(), View.OnClickListener, SurfaceHolder.Callback {
+
+    private var mVideoViewParent: ViewGroup? = null;
+
+    private lateinit var mAdapter: VideoAdapter;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,22 +62,23 @@ class VideoListActivity : AppCompatActivity(), View.OnClickListener, SurfaceHold
             )
         }
 
-        val adapter = VideoAdapter(data)
-        recyclerView.adapter = adapter
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                adapter.updateVideo()
-            }
-        })
-        adapter.mAdapterListener = object : VideoAdapter.AdapterListener {
-            override fun onVideoClick(parentView: ListVideoView, videoView: VideoView) {
+        mAdapter = VideoAdapter(data)
+        recyclerView.adapter = mAdapter
+        mAdapter.mAdapterListener = object : VideoAdapter.AdapterListener {
+            override fun onVideoClick(videoView: VideoView) {
                 videoView.pause()
-                val parent = videoView.parent as ViewGroup
-                parent.removeView(videoView)
+                videoView.setIsProcessDetached(false)
                 VideoManager.getInstance().videoView = videoView
-                videoView.setVideoInitListener(null)
-                startActivity(Intent(this@VideoListActivity, VideoDetailActivity::class.java))
+                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this@VideoListActivity,
+                    videoView.parent as View,
+                    getString(R.string.share_video_view)
+                ).toBundle()
+                mVideoViewParent = videoView.parent as ViewGroup
+                mVideoViewParent?.removeView(videoView)
+                val intent = Intent(this@VideoListActivity, VideoDetailActivity::class.java)
+                intent.putExtra(SHARE_VIDEO_VIEW, true)
+                startActivityForResult(intent, VIDEO_DETAIL_CODE, bundle)
             }
         }
     }
@@ -91,4 +97,15 @@ class VideoListActivity : AppCompatActivity(), View.OnClickListener, SurfaceHold
     override fun surfaceDestroyed(holder: SurfaceHolder) {
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == VIDEO_DETAIL_CODE) {
+            val videoView = VideoManager.getInstance().videoView
+            mAdapter.backToAdapter(videoView)
+        }
+    }
+
+    companion object {
+        const val VIDEO_DETAIL_CODE = 1
+    }
 }

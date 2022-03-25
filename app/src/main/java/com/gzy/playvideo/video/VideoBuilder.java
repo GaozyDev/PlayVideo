@@ -27,7 +27,7 @@ public class VideoBuilder {
      */
     @NotNull
     public ListVideoView createListVideoView() {
-        ListVideoView listVideoView = new ListVideoView(mContext, mParentView);
+        ListVideoView listVideoView = new ListVideoView(mContext);
         mParentView.addView(listVideoView);
         return listVideoView;
     }

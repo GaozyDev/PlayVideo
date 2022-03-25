@@ -7,7 +7,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -46,14 +45,17 @@ public class VideoView extends FrameLayout {
 
     private VideoInitListener mVideoInitListener;
 
-    public VideoView(Context context, LayoutParams layoutParams) {
+    private boolean mIsProcessDetached;
+
+    public VideoView(Context context, LayoutParams layoutParams, boolean isProcessDetached) {
         super(context);
+        setLayoutParams(layoutParams);
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        initView(layoutParams);
+        initView();
+        mIsProcessDetached = isProcessDetached;
     }
 
-    private void initView(LayoutParams layoutParams) {
-        setLayoutParams(layoutParams);
+    private void initView() {
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
         FrameLayout layout = (FrameLayout) inflater.inflate(R.layout.layout_video, this);
         mTextureView = layout.findViewById(R.id.ttv_video_layout);
@@ -75,7 +77,7 @@ public class VideoView extends FrameLayout {
                 mSurface = new Surface(surface);
                 mInitComplete = true;
                 if (mVideoInitListener != null) {
-                    mVideoInitListener.onComplete();
+                    mVideoInitListener.onComplete(VideoView.this);
                 }
 
                 if (mMediaPlayer != null) {
@@ -220,13 +222,6 @@ public class VideoView extends FrameLayout {
         this.mVideoPlayListener = videoPlayListener;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        Log.e(TAG, "onTouchEvent");
-        return true;
-    }
-
     public void seekAndPause(int position) {
         if (mPlayerState != STATE_PLAYING) {
             return;
@@ -241,7 +236,7 @@ public class VideoView extends FrameLayout {
     public void setVideoInitListener(VideoInitListener mVideoInitListener) {
         this.mVideoInitListener = mVideoInitListener;
         if (mInitComplete) {
-            mVideoInitListener.onComplete();
+            mVideoInitListener.onComplete(this);
         } else {
             initTextureView();
         }
@@ -250,9 +245,15 @@ public class VideoView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         Log.e(TAG, "onDetachedFromWindow");
-//        stop();
-//        destroy();
+        if (mIsProcessDetached) {
+            stop();
+            destroy();
+        }
         super.onDetachedFromWindow();
+    }
+
+    public void setIsProcessDetached(boolean processDetached) {
+        this.mIsProcessDetached = processDetached;
     }
 
     @Override
@@ -262,7 +263,7 @@ public class VideoView extends FrameLayout {
     }
 
     public interface VideoInitListener {
-        void onComplete();
+        void onComplete(VideoView videoView);
     }
 
     public interface VideoPlayListener {
