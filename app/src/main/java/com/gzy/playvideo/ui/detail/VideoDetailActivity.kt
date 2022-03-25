@@ -19,6 +19,7 @@ class VideoDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide()
         setContentView(R.layout.activity_video_detail)
         val shareVideoView = intent.getBooleanExtra(SHARE_VIDEO_VIEW, false)
 
