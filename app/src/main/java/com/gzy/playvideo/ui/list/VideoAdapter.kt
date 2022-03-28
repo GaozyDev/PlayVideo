@@ -46,8 +46,8 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
 
             viewHolder.listVideoView?.tag = viewHolder
             viewHolder.listVideoView?.let {
-                it.loadPreview(dataSet.random().preview)
-                it.setVideoInitListener { videoView -> videoView.loadVideo(dataSet.random().url) }
+                it.loadPreview(dataSet[position].preview)
+                it.setVideoInitListener { videoView -> videoView.loadVideo(dataSet[position].url) }
             }
         }
     }

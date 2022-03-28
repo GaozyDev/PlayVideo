@@ -38,7 +38,7 @@ class VideoDetailActivity : AppCompatActivity() {
         val height = (width * SDKConstant.VIDEO_HEIGHT_PERCENT).toInt()
         val layoutParams = FrameLayout.LayoutParams(width, height)
         mVideoView = mVideoManager.videoView
-        mVideoView?.let {
+        mVideoView?.let { it ->
             it.layoutParams = layoutParams
             it.setVideoInitListener { it.start() }
             it.setVideoPlayerListener(null)

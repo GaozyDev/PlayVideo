@@ -26,11 +26,9 @@ public class ListVideoView extends FrameLayout {
 
     private boolean mIsMute = true;
 
-    private ListVideoListener mListVideoListener;
-
-    private VideoView.VideoInitListener mVideoInitListener;
-
     private LayoutParams mLayoutParams;
+
+    private ListVideoListener mListVideoListener;
 
     public ListVideoView(Context context) {
         super(context);
@@ -118,8 +116,7 @@ public class ListVideoView extends FrameLayout {
     }
 
     public void setVideoInitListener(VideoView.VideoInitListener videoInitListener) {
-        mVideoInitListener = videoInitListener;
-        mVideoView.setVideoInitListener(mVideoInitListener);
+        mVideoView.setVideoInitListener(videoInitListener);
     }
 
     public VideoView getVideoView() {
@@ -134,12 +131,7 @@ public class ListVideoView extends FrameLayout {
         mVideoView = videoView;
         mVideoView.setLayoutParams(mLayoutParams);
         mVideoView.setVideoPlayerListener(videoPlayListener);
-        mVideoView.setVideoInitListener(new VideoView.VideoInitListener() {
-            @Override
-            public void onComplete(VideoView videoView) {
-                videoView.start();
-            }
-        });
+        mVideoView.setVideoInitListener(VideoView::start);
         mVideoView.setIsProcessDetached(true);
         mFlVideoParent.addView(mVideoView);
     }

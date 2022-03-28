@@ -39,13 +39,16 @@ public class VideoView extends FrameLayout {
     private Surface mSurface;
 
     private MediaPlayer mMediaPlayer;
-    private VideoPlayListener mVideoPlayListener;
 
     private boolean mInitComplete = false;
 
-    private VideoInitListener mVideoInitListener;
-
     private boolean mIsProcessDetached;
+
+    /**
+     * Listener
+     */
+    private VideoInitListener mVideoInitListener;
+    private VideoPlayListener mVideoPlayListener;
 
     public VideoView(Context context, LayoutParams layoutParams, boolean isProcessDetached) {
         super(context);
