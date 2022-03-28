@@ -51,6 +51,6 @@
         android:layout_marginEnd="6dp"
         android:layout_marginBottom="2dp"
         android:padding="3dp"
-        android:src="@drawable/ic_sound"
+        android:src="@drawable/ic_volume"
         app:tint="@color/trans_60" />
 </FrameLayout>

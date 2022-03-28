@@ -35,7 +35,6 @@ public class VideoView extends FrameLayout {
 
     private TextureView mTextureView;
     private ImageView mIvPreview;
-    private final AudioManager mAudioManager;
     private Surface mSurface;
 
     private MediaPlayer mMediaPlayer;
@@ -53,7 +52,6 @@ public class VideoView extends FrameLayout {
     public VideoView(Context context, LayoutParams layoutParams, boolean isProcessDetached) {
         super(context);
         setLayoutParams(layoutParams);
-        mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         initView();
         mIsProcessDetached = isProcessDetached;
     }
@@ -211,10 +209,8 @@ public class VideoView extends FrameLayout {
     }
 
     public void mute(boolean mute) {
-        if (mMediaPlayer != null && this.mAudioManager != null) {
-            float volume = mute ? 0.0f : 1.0f;
-            mMediaPlayer.setVolume(volume, volume);
-        }
+        float volume = mute ? 0.0f : 1.0f;
+        mMediaPlayer.setVolume(volume, volume);
     }
 
     public boolean isPlaying() {

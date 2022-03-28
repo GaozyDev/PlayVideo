@@ -8,6 +8,8 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.appcompat.content.res.AppCompatResources;
+
 import com.gzy.playvideo.R;
 import com.gzy.playvideo.video.data.SDKConstant;
 import com.gzy.playvideo.video.utils.DisplayUtil;
@@ -21,6 +23,8 @@ public class ListVideoView extends FrameLayout {
     private FrameLayout mFlVideoParent;
 
     private ImageView mIvPlay;
+
+    private ImageView mIvMute;
 
     private VideoView mVideoView;
 
@@ -51,7 +55,7 @@ public class ListVideoView extends FrameLayout {
         mIvPlay = findViewById(R.id.iv_list_video_play);
         ImageView mIvFullScreen = findViewById(R.id.iv_list_video_full);
         ImageView mIvBarrage = findViewById(R.id.iv_list_video_barrage);
-        ImageView mIvMute = findViewById(R.id.iv_list_video_mute);
+        mIvMute = findViewById(R.id.iv_list_video_mute);
 
         initVideoView(mLayoutParams);
 
@@ -60,6 +64,8 @@ public class ListVideoView extends FrameLayout {
         mIvMute.setOnClickListener(v -> {
             mIsMute = !mIsMute;
             mVideoView.mute(mIsMute);
+            mIvMute.setImageDrawable(AppCompatResources.getDrawable(getContext(),
+                    mIsMute ? R.drawable.ic_volume_mute : R.drawable.ic_volume));
         });
     }
 
@@ -67,7 +73,6 @@ public class ListVideoView extends FrameLayout {
         mVideoView = new VideoView(getContext(), layoutParams, true);
         mVideoView.setVideoPlayerListener(videoPlayListener);
         mFlVideoParent.addView(mVideoView);
-        mVideoView.mute(mIsMute);
     }
 
     VideoView.VideoPlayListener videoPlayListener = new VideoView.VideoPlayListener() {
@@ -116,7 +121,12 @@ public class ListVideoView extends FrameLayout {
     }
 
     public void setVideoInitListener(VideoView.VideoInitListener videoInitListener) {
-        mVideoView.setVideoInitListener(videoInitListener);
+        mVideoView.setVideoInitListener(videoView -> {
+            videoInitListener.onComplete(videoView);
+            videoView.mute(mIsMute);
+            mIvMute.setImageDrawable(AppCompatResources.getDrawable(getContext(),
+                    mIsMute ? R.drawable.ic_volume_mute : R.drawable.ic_volume));
+        });
     }
 
     public VideoView getVideoView() {
