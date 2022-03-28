@@ -10,8 +10,7 @@
     <FrameLayout
         android:id="@+id/fl_list_video_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:transitionName="@string/share_video_view" />
+        android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/iv_list_video_play"

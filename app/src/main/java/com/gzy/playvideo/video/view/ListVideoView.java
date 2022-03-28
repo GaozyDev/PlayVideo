@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 @SuppressLint("ViewConstructor")
 public class ListVideoView extends FrameLayout {
 
-
     private FrameLayout mFlVideoParent;
 
     private ImageView mIvPlay;
@@ -57,7 +56,7 @@ public class ListVideoView extends FrameLayout {
         ImageView mIvBarrage = findViewById(R.id.iv_list_video_barrage);
         mIvMute = findViewById(R.id.iv_list_video_mute);
 
-        initVideoView(mLayoutParams);
+        initVideoView();
 
         mIvPlay.setOnClickListener(v -> {
         });
@@ -69,8 +68,8 @@ public class ListVideoView extends FrameLayout {
         });
     }
 
-    private void initVideoView(LayoutParams layoutParams) {
-        mVideoView = new VideoView(getContext(), layoutParams, true);
+    private void initVideoView() {
+        mVideoView = new VideoView(getContext(), (LayoutParams) getLayoutParams(), true);
         mVideoView.setVideoPlayerListener(videoPlayListener);
         mFlVideoParent.addView(mVideoView);
     }

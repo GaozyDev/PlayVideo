@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.gzy.playvideo.video.view.DetailVideoView;
 import com.gzy.playvideo.video.view.ListVideoView;
+import com.gzy.playvideo.video.view.VideoView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,13 +15,17 @@ public class VideoBuilder {
 
     private final String TAG = "VideoAdSlot";
 
-    private final Context mContext;
+    private Context mContext;
 
-    private final ViewGroup mParentView;
+    private ViewGroup mParentView;
 
-    public VideoBuilder(ViewGroup parentView) {
+    public VideoBuilder() {
+    }
+
+    public VideoBuilder setParentView(ViewGroup parentView) {
         mContext = parentView.getContext();
         mParentView = parentView;
+        return this;
     }
 
     /**
@@ -35,8 +41,10 @@ public class VideoBuilder {
     /**
      * 创建视频详情页 View
      */
-    public View createVideoView() {
-        return new View(mContext);
+    public DetailVideoView createDetailVideoView(@NotNull VideoView videoView) {
+        DetailVideoView detailVideoView = new DetailVideoView(mContext, videoView);
+        mParentView.addView(detailVideoView);
+        return detailVideoView;
     }
 
     /**

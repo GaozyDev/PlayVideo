@@ -34,9 +34,8 @@ class VideoAdapter(private val dataSet: List<VideoData>) :
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         if (viewHolder is VideoHolder) {
             if (viewHolder.listVideoView == null) {
-                viewHolder.listVideoView = mVideoManager.build(
-                    viewHolder.layout
-                ).createListVideoView()
+                viewHolder.listVideoView =
+                    mVideoManager.build().setParentView(viewHolder.layout).createListVideoView()
 
                 viewHolder.listVideoView?.setListVideoListener { listVideoView ->
                     mAdapterListener?.onVideoClick(listVideoView.videoView)

@@ -1,7 +1,5 @@
 package com.gzy.playvideo.video;
 
-import android.view.ViewGroup;
-
 import com.gzy.playvideo.video.view.VideoView;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +22,8 @@ public class VideoManager {
     }
 
     @NotNull
-    public VideoBuilder build(ViewGroup parentView) {
-        return new VideoBuilder(parentView);
+    public VideoBuilder build() {
+        return new VideoBuilder();
     }
 
     public VideoView getVideoView() {

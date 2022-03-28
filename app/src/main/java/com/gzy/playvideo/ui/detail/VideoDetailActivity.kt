@@ -6,8 +6,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.gzy.playvideo.R
 import com.gzy.playvideo.video.VideoManager
-import com.gzy.playvideo.video.data.SDKConstant
-import com.gzy.playvideo.video.view.VideoView
+import com.gzy.playvideo.video.view.DetailVideoView
 
 class VideoDetailActivity : AppCompatActivity() {
 
@@ -15,7 +14,7 @@ class VideoDetailActivity : AppCompatActivity() {
 
     private var mVideoManager: VideoManager = VideoManager.getInstance()
 
-    private var mVideoView: VideoView? = null
+    private var mDetailVideoView: DetailVideoView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,26 +33,18 @@ class VideoDetailActivity : AppCompatActivity() {
     }
 
     private fun initVideoView() {
-        val width = this.windowManager.defaultDisplay.width
-        val height = (width * SDKConstant.VIDEO_HEIGHT_PERCENT).toInt()
-        val layoutParams = FrameLayout.LayoutParams(width, height)
-        mVideoView = mVideoManager.videoView
-        mVideoView?.let { it ->
-            it.layoutParams = layoutParams
-            it.setVideoInitListener { it.start() }
-            it.setVideoPlayerListener(null)
-            mFlVideoParent.addView(it)
-        }
+        mDetailVideoView = mVideoManager.build().setParentView(mFlVideoParent)
+            .createDetailVideoView(mVideoManager.videoView)
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         setResult(RESULT_OK)
-        mVideoView?.let {
+        mDetailVideoView?.let {
             it.pause()
-            VideoManager.getInstance().videoView = it
-            val parent = it.parent as ViewGroup
-            parent.removeView(mVideoView)
+            VideoManager.getInstance().videoView = it.videoView
+            val parent = it.videoView.parent as ViewGroup
+            parent.removeView(it.videoView)
         }
     }
 
