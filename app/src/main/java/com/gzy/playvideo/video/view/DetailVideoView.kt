@@ -1,7 +1,9 @@
 package com.gzy.playvideo.video.view
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.*
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +11,9 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import com.gzy.playvideo.R
 import com.gzy.playvideo.video.data.SDKConstant
-import android.animation.ObjectAnimator
-import android.os.CountDownTimer
-import androidx.appcompat.content.res.AppCompatResources
 
 
 @SuppressLint("ViewConstructor")
@@ -49,7 +49,7 @@ class DetailVideoView(
 
     init {
         initView()
-        mUiCountDown = object : CountDownTimer(1000 * 3L, 1000) {
+        mUiCountDown = object : CountDownTimer(1000 * 5L, 1000) {
             override fun onTick(millisUntilFinished: Long) {
             }
 
@@ -151,6 +151,7 @@ class DetailVideoView(
         videoView.setVideoPlayerListener(object : VideoView.VideoPlayListener {
             override fun onVideoPlayStart() {
                 mIsPlaying = true
+                mHandler.sendEmptyMessage(TIME_MSG)
             }
 
             override fun onVideoPlayPause() {
@@ -180,6 +181,40 @@ class DetailVideoView(
             mFlLoading.visibility = GONE
         }
         mFlVideoParent.addView(videoView)
+    }
+
+    private val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                TIME_MSG -> {
+                    sendEmptyMessageDelayed(TIME_MSG, 16)
+                    updateProgress()
+                }
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateProgress() {
+        val position = videoView.currentPosition.toFloat() / 1000
+        val duration = videoView.duration.toFloat() / 1000
+        val progress = (position / duration * 1000).toInt()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            mProgressBar.setProgress(progress, true)
+        } else {
+            mProgressBar.progress = progress
+        }
+        mTvDuration.text = String.format(
+            resources.getString(R.string.video_play_progress),
+            (position / 60).toInt(),
+            (position % 60).toInt(),
+            (duration / 60).toInt(),
+            (duration % 60).toInt()
+        )
+    }
+
+    companion object {
+        private const val TIME_MSG = 1
     }
 
     interface DetailVideoListener {

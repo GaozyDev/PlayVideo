@@ -210,8 +210,12 @@ public class VideoView extends FrameLayout {
         return mMediaPlayer.isPlaying();
     }
 
-    public void setVideoPlayerListener(VideoPlayListener videoPlayListener) {
-        this.mVideoPlayListener = videoPlayListener;
+    public int getDuration() {
+        return mMediaPlayer.getDuration();
+    }
+
+    public int getCurrentPosition() {
+        return mMediaPlayer.getCurrentPosition();
     }
 
     public void seekAndPause(int position) {
@@ -223,6 +227,10 @@ public class VideoView extends FrameLayout {
             mMediaPlayer.seekTo(position);
             mMediaPlayer.setOnSeekCompleteListener(mp -> mMediaPlayer.pause());
         }
+    }
+
+    public void setVideoPlayerListener(VideoPlayListener videoPlayListener) {
+        this.mVideoPlayListener = videoPlayListener;
     }
 
     public void setVideoInitListener(VideoInitListener mVideoInitListener) {

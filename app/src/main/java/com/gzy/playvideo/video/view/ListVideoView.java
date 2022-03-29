@@ -103,25 +103,9 @@ public class ListVideoView extends FrameLayout {
         }
     };
 
-    public void resume() {
-        mVideoView.start();
-    }
-
-    public void pause() {
-        mVideoView.pause();
-    }
-
-    public boolean isPlaying() {
-        return mVideoView.isPlaying();
-    }
-
     public void loadPreview(String url) {
         mIvPlay.setVisibility(VISIBLE);
         mVideoView.loadPreview(url);
-    }
-
-    public void loadVideo(String url) {
-        mVideoView.loadVideo(url);
     }
 
     public void setVideoInitListener(VideoView.VideoInitListener videoInitListener) {

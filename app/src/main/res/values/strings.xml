@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PlayVideo</string>
+    <string name="video_play_progress">%1$02d:%2$02d/%3$02d:%4$02d</string>
 
     <string name="share_video_view">ShareVideo</string>
 </resources>
