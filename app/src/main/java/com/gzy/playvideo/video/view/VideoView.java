@@ -116,16 +116,12 @@ public class VideoView extends FrameLayout {
         });
         mMediaPlayer.setOnCompletionListener(mp -> {
             Log.e(TAG, "Completion");
-            if (mVideoPlayListener != null) {
-                mVideoPlayListener.onVideoPlayComplete();
-            }
+            mVideoPlayListener.onVideoPlayComplete();
             playBack();
         });
         mMediaPlayer.setOnErrorListener((mp, what, extra) -> {
             Log.e(TAG, "Error");
-            if (mVideoPlayListener != null) {
-                mVideoPlayListener.onVideoPlayFailed();
-            }
+            mVideoPlayListener.onVideoPlayFailed();
             mPlayerState = STATE_ERROR;
             mMediaPlayer = mp;
             stop();
@@ -165,12 +161,8 @@ public class VideoView extends FrameLayout {
         if (!isPlaying()) {
             mPlayerState = STATE_PLAYING;
             mMediaPlayer.start();
-            postDelayed(() -> {
-                mIvPreview.setVisibility(GONE);
-                if (mVideoPlayListener != null) {
-                    mVideoPlayListener.onVideoPlayStart();
-                }
-            }, 500);
+            mVideoPlayListener.onVideoPlayStart();
+            postDelayed(() -> mIvPreview.setVisibility(GONE), 500);
         }
     }
 
@@ -181,6 +173,7 @@ public class VideoView extends FrameLayout {
         mPlayerState = STATE_PAUSING;
         if (isPlaying()) {
             mMediaPlayer.pause();
+            mVideoPlayListener.onVideoPlayPause();
         }
     }
 
@@ -269,9 +262,11 @@ public class VideoView extends FrameLayout {
 
         void onVideoPlayStart();
 
-        void onVideoPlayFailed();
+        void onVideoPlayPause();
 
         void onVideoPlayComplete();
+
+        void onVideoPlayFailed();
 
         void onVideoClick();
     }

@@ -34,14 +34,22 @@ class VideoDetailActivity : AppCompatActivity() {
 
     private fun initVideoView() {
         mDetailVideoView = mVideoManager.build().setParentView(mFlVideoParent)
-            .createDetailVideoView(mVideoManager.videoView)
+            .createDetailVideoView(mVideoManager.videoView, object : DetailVideoView.DetailVideoListener {
+                override fun onBackClick() {
+                    onBackPressed()
+                }
+
+                override fun onFloatClick() {
+                }
+            })
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         setResult(RESULT_OK)
         mDetailVideoView?.let {
-            it.pause()
+            it.hideOrShowUI(true)
+            it.videoView.pause()
             VideoManager.getInstance().videoView = it.videoView
             val parent = it.videoView.parent as ViewGroup
             parent.removeView(it.videoView)

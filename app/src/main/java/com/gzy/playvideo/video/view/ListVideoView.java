@@ -81,13 +81,18 @@ public class ListVideoView extends FrameLayout {
         }
 
         @Override
-        public void onVideoPlayFailed() {
+        public void onVideoPlayPause() {
 
         }
 
         @Override
         public void onVideoPlayComplete() {
             mIvPlay.setVisibility(VISIBLE);
+        }
+
+        @Override
+        public void onVideoPlayFailed() {
+
         }
 
         @Override

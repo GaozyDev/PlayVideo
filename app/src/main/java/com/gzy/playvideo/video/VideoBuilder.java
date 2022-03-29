@@ -41,8 +41,9 @@ public class VideoBuilder {
     /**
      * 创建视频详情页 View
      */
-    public DetailVideoView createDetailVideoView(@NotNull VideoView videoView) {
-        DetailVideoView detailVideoView = new DetailVideoView(mContext, videoView);
+    public DetailVideoView createDetailVideoView(@NotNull VideoView videoView,
+                                                 @NotNull DetailVideoView.DetailVideoListener detailVideoListener) {
+        DetailVideoView detailVideoView = new DetailVideoView(mContext, videoView, detailVideoListener);
         mParentView.addView(detailVideoView);
         return detailVideoView;
     }

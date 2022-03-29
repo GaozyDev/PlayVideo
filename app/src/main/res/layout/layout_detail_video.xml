@@ -19,6 +19,13 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/iv_detail_video_grey_top"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_grey_video_top"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/iv_detail_video_back"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -44,6 +51,7 @@
             android:id="@+id/fl_detail_video_loading"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginBottom="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,25 +60,27 @@
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/pink" />
 
             <TextView
                 android:id="@+id/tv_detail_video_loading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|bottom"
-                android:textColor="@color/white"
-                tools:text="Loading" />
+                android:text="Loading"
+                android:textColor="@color/white" />
         </FrameLayout>
 
         <ImageView
+            android:id="@+id/iv_detail_video_grey_bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@drawable/bg_grey"
+            android:background="@drawable/bg_grey_video_bottom"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
-            android:id="@+id/iv_detail_video_pause"
+            android:id="@+id/iv_detail_video_play"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"
@@ -82,18 +92,19 @@
 
         <ProgressBar
             android:id="@+id/pb_detail_video_progress"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="@style/progress_bar_video_play"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="12dp"
             android:max="100"
             android:progress="30"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_detail_video_pause"
+            android:secondaryProgress="50"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_detail_video_play"
             app:layout_constraintEnd_toStartOf="@+id/tv_detail_video_duration"
-            app:layout_constraintStart_toEndOf="@+id/iv_detail_video_pause"
-            app:layout_constraintTop_toTopOf="@+id/iv_detail_video_pause" />
+            app:layout_constraintStart_toEndOf="@+id/iv_detail_video_play"
+            app:layout_constraintTop_toTopOf="@+id/iv_detail_video_play" />
 
         <TextView
             android:id="@+id/tv_detail_video_duration"
