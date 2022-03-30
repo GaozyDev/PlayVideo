@@ -182,6 +182,9 @@ class DetailVideoView(
                 mIsPlaying = false
                 mHandler.removeCallbacksAndMessages(TIME_MSG)
                 updateUI()
+                if (!mIsUIShow) {
+                    hideOrShowUI()
+                }
             }
 
             override fun onVideoPlayFailed() {
