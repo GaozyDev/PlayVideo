@@ -109,16 +109,6 @@ class DetailVideoView(
             } else {
                 videoView.start()
             }
-            mIvPlay.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    context,
-                    if (mIsPlaying) {
-                        R.drawable.ic_play
-                    } else {
-                        R.drawable.ic_pause
-                    }
-                )
-            )
         }
     }
 
@@ -152,18 +142,25 @@ class DetailVideoView(
             override fun onVideoPlayStart() {
                 mIsPlaying = true
                 mHandler.sendEmptyMessage(TIME_MSG)
+                updateUI()
             }
 
             override fun onVideoPlayPause() {
                 mIsPlaying = false
+                mHandler.removeCallbacksAndMessages(TIME_MSG)
+                updateUI()
             }
 
             override fun onVideoPlayComplete() {
                 mIsPlaying = false
+                mHandler.removeCallbacksAndMessages(TIME_MSG)
+                updateUI()
             }
 
             override fun onVideoPlayFailed() {
                 mIsPlaying = false
+                mHandler.removeCallbacksAndMessages(TIME_MSG)
+                updateUI()
             }
 
             override fun onVideoClick() {
@@ -194,6 +191,19 @@ class DetailVideoView(
         }
     }
 
+    private fun updateUI() {
+        mIvPlay.setImageDrawable(
+            AppCompatResources.getDrawable(
+                context,
+                if (mIsPlaying) {
+                    R.drawable.ic_pause
+                } else {
+                    R.drawable.ic_play
+                }
+            )
+        )
+    }
+
     @SuppressLint("SetTextI18n")
     private fun updateProgress() {
         val position = videoView.currentPosition.toFloat() / 1000
@@ -214,6 +224,11 @@ class DetailVideoView(
             (duration / 60).toInt(),
             (duration % 60).toInt()
         )
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        mHandler.removeMessages(TIME_MSG)
     }
 
     companion object {
