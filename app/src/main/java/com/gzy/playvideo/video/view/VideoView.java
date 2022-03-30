@@ -216,9 +216,7 @@ public class VideoView extends FrameLayout {
     }
 
     public void seekTo(int position) {
-        if (isPlaying()) {
-            mMediaPlayer.seekTo(position);
-        }
+        mMediaPlayer.seekTo(position);
     }
 
     public void setVideoPlayerListener(VideoPlayListener videoPlayListener) {
