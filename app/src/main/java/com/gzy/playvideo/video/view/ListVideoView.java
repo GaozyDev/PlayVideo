@@ -127,7 +127,7 @@ public class ListVideoView extends FrameLayout {
 
     public void backVideoView(VideoView videoView) {
         mVideoView = videoView;
-        mVideoView.setLayoutParams(mLayoutParams);
+        mVideoView.initLayoutParams(mLayoutParams);
         mVideoView.setVideoPlayerListener(videoPlayListener);
         mVideoView.setVideoInitListener(VideoView::start);
         mVideoView.setIsProcessDetached(true);

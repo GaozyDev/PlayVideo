@@ -147,7 +147,7 @@ class DetailVideoView(
     }
 
     private fun initVideoView() {
-        videoView.layoutParams = layoutParams
+        videoView.initLayoutParams(layoutParams as LayoutParams?)
         videoView.setVideoPlayerListener(object : VideoView.VideoPlayListener {
             override fun onVideoPlayStart() {
                 mIsPlaying = true
@@ -197,13 +197,16 @@ class DetailVideoView(
     @SuppressLint("SetTextI18n")
     private fun updateProgress() {
         val position = videoView.currentPosition.toFloat() / 1000
+        val bufferPosition = videoView.currentBufferPosition.toFloat() / 1000
         val duration = videoView.duration.toFloat() / 1000
         val progress = (position / duration * 1000).toInt()
+        val bufferProgress = (bufferPosition / duration * 1000).toInt()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             mProgressBar.setProgress(progress, true)
         } else {
             mProgressBar.progress = progress
         }
+        mProgressBar.secondaryProgress = bufferProgress
         mTvDuration.text = String.format(
             resources.getString(R.string.video_play_progress),
             (position / 60).toInt(),

@@ -1,5 +1,7 @@
 package com.gzy.playvideo.video.view;
 
+import static android.view.Gravity.CENTER;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -51,7 +54,9 @@ public class VideoView extends FrameLayout {
 
     public VideoView(Context context, LayoutParams layoutParams, boolean isProcessDetached) {
         super(context);
-        setLayoutParams(layoutParams);
+        LayoutParams lParams = new LayoutParams(layoutParams.width, layoutParams.height);
+        lParams.gravity = CENTER;
+        setLayoutParams(lParams);
         initView();
         mIsProcessDetached = isProcessDetached;
     }
@@ -134,7 +139,7 @@ public class VideoView extends FrameLayout {
 
     public void loadPreview(String url) {
         mIvPreview.setVisibility(VISIBLE);
-        Glide.with(mIvPreview).load(url).into(mIvPreview);
+        Glide.with(mIvPreview).load(url).centerCrop().into(mIvPreview);
     }
 
     public void loadVideo(String url) {
@@ -158,12 +163,20 @@ public class VideoView extends FrameLayout {
         if (this.mPlayerState == STATE_PLAYING) {
             return;
         }
+        initLayoutParams();
         if (!isPlaying()) {
             mPlayerState = STATE_PLAYING;
             mMediaPlayer.start();
             mVideoPlayListener.onVideoPlayStart();
-            postDelayed(() -> mIvPreview.setVisibility(GONE), 500);
+            mIvPreview.setVisibility(GONE);
         }
+    }
+
+    private void initLayoutParams() {
+        float percent = (float) mMediaPlayer.getVideoWidth() / mMediaPlayer.getVideoHeight();
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        layoutParams.height = (int) (layoutParams.width / percent);
+        setLayoutParams(layoutParams);
     }
 
     public void pause() {
@@ -218,6 +231,10 @@ public class VideoView extends FrameLayout {
         return mMediaPlayer.getCurrentPosition();
     }
 
+    public int getCurrentBufferPosition() {
+        return getCurrentPosition() + 1000 * 8;
+    }
+
     public void seekAndPause(int position) {
         if (mPlayerState != STATE_PLAYING) {
             return;
@@ -260,6 +277,12 @@ public class VideoView extends FrameLayout {
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
         Log.e(TAG, "visibility:" + visibility);
+    }
+
+    public void initLayoutParams(LayoutParams layoutParams) {
+        LayoutParams lParams = new LayoutParams(layoutParams.width, layoutParams.height);
+        lParams.gravity = CENTER;
+        setLayoutParams(lParams);
     }
 
     public interface VideoInitListener {
