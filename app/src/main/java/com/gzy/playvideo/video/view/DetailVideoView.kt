@@ -3,11 +3,17 @@ package com.gzy.playvideo.video.view
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.*
+import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.gzy.playvideo.R
 import com.gzy.playvideo.video.data.SDKConstant
@@ -242,11 +248,7 @@ class DetailVideoView(
         val progress = (position / duration * 1000).toInt()
         val bufferProgress = (bufferPosition / duration * 1000).toInt()
         if (!mUserTouch) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                mSeekBar.setProgress(progress, true)
-            } else {
-                mSeekBar.progress = progress
-            }
+            mSeekBar.progress = progress
         }
         mSeekBar.secondaryProgress = bufferProgress
         mTvDuration.text = String.format(
