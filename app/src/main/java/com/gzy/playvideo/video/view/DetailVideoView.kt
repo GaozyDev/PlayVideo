@@ -7,10 +7,7 @@ import android.os.*
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources
 import com.gzy.playvideo.R
 import com.gzy.playvideo.video.data.SDKConstant
@@ -30,9 +27,10 @@ class DetailVideoView(
     private lateinit var mIvFloat: ImageView
     private lateinit var mFlLoading: FrameLayout
     private lateinit var mTvLoading: TextView
+    private lateinit var mTvProgress: TextView
     private lateinit var mIvGreyBottom: ImageView
     private lateinit var mIvPlay: ImageView
-    private lateinit var mProgressBar: ProgressBar
+    private lateinit var mSeekBar: SeekBar
     private lateinit var mTvDuration: TextView
     private lateinit var mIvFull: ImageView
 
@@ -46,6 +44,8 @@ class DetailVideoView(
     private var mIsUIShow = true
 
     private var mLastAnimStartTime: Long = 0
+
+    private var mUserTouch = false;
 
     init {
         initView()
@@ -76,14 +76,15 @@ class DetailVideoView(
         mIvFloat = findViewById(R.id.iv_detail_video_float)
         mFlLoading = findViewById(R.id.fl_detail_video_loading)
         mTvLoading = findViewById(R.id.tv_detail_video_loading)
+        mTvProgress = findViewById(R.id.tv_detail_video_progress)
         mIvGreyBottom = findViewById(R.id.iv_detail_video_grey_bottom)
         mIvPlay = findViewById(R.id.iv_detail_video_play)
-        mProgressBar = findViewById(R.id.pb_detail_video_progress)
+        mSeekBar = findViewById(R.id.sb_detail_video_progress)
         mTvDuration = findViewById(R.id.tv_detail_video_duration)
         mIvFull = findViewById(R.id.iv_detail_video_full)
 
         mTopUI = listOf(mIvGreyTop, mIvBack, mIvFloat)
-        mBottomUI = listOf(mIvGreyBottom, mIvPlay, mProgressBar, mTvDuration, mIvFull)
+        mBottomUI = listOf(mIvGreyBottom, mIvPlay, mSeekBar, mTvDuration, mIvFull)
 
         // 用来做动画
         for (view in mTopUI) {
@@ -110,6 +111,32 @@ class DetailVideoView(
                 videoView.start()
             }
         }
+        mSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    val duration = (videoView.duration.toFloat() / 1000).toInt()
+                    val position = (progress.toFloat() / 1000 * duration).toInt()
+                    videoView.seekTo(position * 1000)
+                    mTvProgress.text = String.format(
+                        resources.getString(R.string.video_play_progress),
+                        position / 60,
+                        position % 60,
+                        duration / 60,
+                        duration % 60
+                    )
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                mUserTouch = true
+                mTvProgress.visibility = VISIBLE
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                mUserTouch = false
+                mTvProgress.visibility = GONE
+            }
+        })
     }
 
     fun hideOrShowUI(forceHide: Boolean = false) {
@@ -211,12 +238,14 @@ class DetailVideoView(
         val duration = videoView.duration.toFloat() / 1000
         val progress = (position / duration * 1000).toInt()
         val bufferProgress = (bufferPosition / duration * 1000).toInt()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mProgressBar.setProgress(progress, true)
-        } else {
-            mProgressBar.progress = progress
+        if (!mUserTouch) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mSeekBar.setProgress(progress, true)
+            } else {
+                mSeekBar.progress = progress
+            }
         }
-        mProgressBar.secondaryProgress = bufferProgress
+        mSeekBar.secondaryProgress = bufferProgress
         mTvDuration.text = String.format(
             resources.getString(R.string.video_play_progress),
             (position / 60).toInt(),

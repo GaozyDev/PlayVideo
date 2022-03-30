@@ -30,12 +30,6 @@ public class VideoView extends FrameLayout {
 
     private final String TAG = "VideoView";
 
-    private static final int STATE_ERROR = -1;
-    private static final int STATE_IDLE = 0;
-    private static final int STATE_PLAYING = 1;
-    private static final int STATE_PAUSING = 2;
-    private int mPlayerState = STATE_IDLE;
-
     private TextureView mTextureView;
     private ImageView mIvPreview;
     private Surface mSurface;
@@ -127,7 +121,6 @@ public class VideoView extends FrameLayout {
         mMediaPlayer.setOnErrorListener((mp, what, extra) -> {
             Log.e(TAG, "Error");
             mVideoPlayListener.onVideoPlayFailed();
-            mPlayerState = STATE_ERROR;
             mMediaPlayer = mp;
             stop();
             return true;
@@ -144,9 +137,6 @@ public class VideoView extends FrameLayout {
 
     public void loadVideo(String url) {
         Log.e(TAG, "loadVideo");
-        if (this.mPlayerState != STATE_IDLE) {
-            return;
-        }
         try {
             mMediaPlayer = createMediaPlayer();
             mMediaPlayer.setDataSource(url);
@@ -160,12 +150,8 @@ public class VideoView extends FrameLayout {
 
     public void start() {
         Log.e(TAG, "start");
-        if (this.mPlayerState == STATE_PLAYING) {
-            return;
-        }
-        initLayoutParams();
         if (!isPlaying()) {
-            mPlayerState = STATE_PLAYING;
+            initLayoutParams();
             mMediaPlayer.start();
             mVideoPlayListener.onVideoPlayStart();
             mIvPreview.setVisibility(GONE);
@@ -180,10 +166,6 @@ public class VideoView extends FrameLayout {
     }
 
     public void pause() {
-        if (this.mPlayerState != STATE_PLAYING) {
-            return;
-        }
-        mPlayerState = STATE_PAUSING;
         if (isPlaying()) {
             mMediaPlayer.pause();
             mVideoPlayListener.onVideoPlayPause();
@@ -196,7 +178,6 @@ public class VideoView extends FrameLayout {
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.stop();
         }
-        mPlayerState = STATE_IDLE;
     }
 
     public void destroy() {
@@ -207,7 +188,6 @@ public class VideoView extends FrameLayout {
     }
 
     public void playBack() {
-        mPlayerState = STATE_IDLE;
         if (mMediaPlayer != null) {
             mMediaPlayer.seekTo(0);
             mMediaPlayer.pause();
@@ -235,14 +215,9 @@ public class VideoView extends FrameLayout {
         return getCurrentPosition() + 1000 * 8;
     }
 
-    public void seekAndPause(int position) {
-        if (mPlayerState != STATE_PLAYING) {
-            return;
-        }
-        mPlayerState = STATE_PAUSING;
+    public void seekTo(int position) {
         if (isPlaying()) {
             mMediaPlayer.seekTo(position);
-            mMediaPlayer.setOnSeekCompleteListener(mp -> mMediaPlayer.pause());
         }
     }
 

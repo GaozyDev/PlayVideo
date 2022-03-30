@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_progress_thumb" android:state_pressed="true" />
+    <item android:drawable="@drawable/ic_progress_thumb" android:state_pressed="false" />
+    <item>
+        <clip>
+            <shape >
+                <!--进度条的圆角-->
+                <corners android:radius="18dp" />
+                <!--缓冲的进度的颜色，一般视频播放的缓冲进度-->
+                <solid android:color="#A6FFFFFF" />
+
+                <size android:width="10dp" android:height="10dp" />
+            </shape>
+        </clip>
+    </item>
+</selector>
