@@ -150,7 +150,7 @@ public class VideoView extends FrameLayout {
 
     public void start() {
         Log.e(TAG, "start");
-        if (!isPlaying()) {
+        if (!mMediaPlayer.isPlaying()) {
             initLayoutParams();
             mMediaPlayer.start();
             mVideoPlayListener.onVideoPlayStart();
@@ -166,7 +166,7 @@ public class VideoView extends FrameLayout {
     }
 
     public void pause() {
-        if (isPlaying()) {
+        if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             mVideoPlayListener.onVideoPlayPause();
         }
@@ -197,10 +197,6 @@ public class VideoView extends FrameLayout {
     public void mute(boolean mute) {
         float volume = mute ? 0.0f : 1.0f;
         mMediaPlayer.setVolume(volume, volume);
-    }
-
-    public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
     }
 
     public int getDuration() {
